@@ -2,26 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Frontend Mentor | E-commerce product page</title>
   <link rel="icon" type="image/png" sizes="32x32" href=".images/favicon-32x32.png">
   <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght,YOPQ@100..900,300&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link href="https://googleapis.com/css2?family=Kumbh+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="wrapper">
     <header>
       <div class="top-panel">
         <div class="left">
-           <button class="nav-menu-btn">
-            <img width="16" height="15" src="images/icon-menu.svg">
+           <button class="nav-menu-btn" aria-label="Open navigation menu">
+            <img width="16" height="15" src="images/icon-menu.svg" alt="open navigation menu">
           </button>
-          <h1 class="logo">sneakers</h1>
+          <a class="logo" href="#">sneakers</a>
           <div class="nav-menu">
-            <button class="close-menu-btn">
-              <img class="close-menu" width="14" height="15" src="images/icon-close.svg">
+            <button class="close-menu-btn" aria-label="Close navigation menu">
+              <img class="close-menu" width="14" height="15" src="images/icon-close.svg" alt="close navigation menu">
             </button>
             <nav class="nav">
               <ul>
@@ -35,44 +35,64 @@
           </div>
         </div>
         <div class="right">
-          <button class="cart">
-            <img width="22" height="20" src="images/icon-cart.svg">
-            <div class="cart-panel">
-              <p class='cart-title'>Cart</p>
-              <div class="cart-items">
-              </div>
-            </div>
+          <button class="cart" Look inside the cart>
+            <img width="22" height="20" src="images/icon-cart.svg" alt="look inside the cart">
           </button>
+          <div class="cart-panel" aria-label="0 items">
+            <p class='cart-title'>Cart</p>
+            <div class="cart-items"></div>
+          </div>
           <img class="avatar" src="images/image-avatar.png" alt="Avatar">
         </div>
       </div>
       <div class="product-images-box">
-        <div class="product-image">
-          <button class="prev-image" disabled>
-            <img width="12" height="18" src="images/icon-previous.svg">
+        <div class="current-product-display">
+          <img src="images/image-product-1.jpg" alt="Product Image Display" class="product-image">
+          <button class="prev-image" disabled aria-label="Previous image">
+            <img width="12" height="18" src="images/icon-previous.svg" alt="get previous image">
           </button>
-          <button class="next-image">
-            <img width="12" height="18" src="images/icon-next.svg">
+          <button class="next-image" aria-label="Next image">
+            <img width="12" height="18" src="images/icon-next.svg" alt="get next image">
           </button>
         </div>
         <div class="product-thumbnails">
-          <div class="thumbnail-container chosen">
-            <img src="images/image-product-1-thumbnail.jpg" alt="Product Thumbnail 1">
-          </div>
-          <div class="thumbnail-container">
-            <img src="images/image-product-2-thumbnail.jpg" alt="Product Thumbnail 2">
-          </div>
-          <div class="thumbnail-container">
-            <img src="images/image-product-3-thumbnail.jpg" alt="Product Thumbnail 3">
-          </div>
-          <div class="thumbnail-container">
-            <img src="images/image-product-4-thumbnail.jpg" alt="Product Thumbnail 4">
-          </div>
+          <button class="thumbnail-tab" 
+            role="tab" 
+            aria-selected="true" 
+            aria-controls="main-image-panel" 
+            id="thumb-1"
+            type="button">
+            <img src="images/image-product-1-thumbnail.jpg" alt="Product Image 1">
+          </button>
+          <button class="thumbnail-tab" 
+            role="tab" 
+            aria-selected="false" 
+            aria-controls="main-image-panel" 
+            id="thumb-2"
+            type="button">
+            <img src="images/image-product-2-thumbnail.jpg" alt="Product Image 2">
+          </button>
+          <button class="thumbnail-tab" 
+            role="tab" 
+            aria-selected="false" 
+            aria-controls="main-image-panel" 
+            id="thumb-3"
+            type="button">
+            <img src="images/image-product-3-thumbnail.jpg" alt="Product Image 3">
+          </button>
+          <button class="thumbnail-tab" 
+            role="tab" 
+            aria-selected="false" 
+            aria-controls="main-image-panel" 
+            id="thumb-2"
+            type="button">
+            <img src="images/image-product-4-thumbnail.jpg" alt="Product Image 4">
+          </button>
       </div>
     </header>
     <main>
       <p class="brand">Sneaker Company</p>
-      <h2>Fall Limited Edition Sneakers</h2>
+      <h1>Fall Limited Edition Sneakers</h1>
       <p class="description">These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they’ll withstand everything the weather can offer.</p>
       <div class="price">
         <span class="current-price">$125.00</span>
@@ -81,12 +101,16 @@
       </div>
       <div class="add-to-cart">
         <div class="quantity">
-          <button class="decrease">-</button>
+          <button class="decrease" aria-label="Decrease quantity">
+            <img src="images/icon-minus.svg" alt="decrease quantity">
+          </button>
           <span class="quantity-value">0</span>
-          <button class="increase">+</button>
+          <button class="increase" aria-label="increase quantity">
+            <img src="images/icon-plus.svg" alt="increase quantity">
+          </button>
         </div>
-        <button class="add-to-cart-btn">
-            <img width="22" height="20" src="images/icon-cart.svg">
+        <button class="add-to-cart-btn" aria-label="Add item to the cart">
+            <img width="22" height="20" src="images/icon-cart.svg" alt="add to the cart">
             <span class="add-to-cart-text">Add to cart</span>
          
         </button>

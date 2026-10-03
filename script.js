@@ -15,11 +15,10 @@ function addEvent(ele, events, active, e) {
         megnify: () => {
             ele.addEventListener('click', event => {
                 if (window.innerWidth >= 800 && event.target == document.querySelector('.product-image')) {
-                    let mainEl = document.querySelector('main');
-                    //let pageBlock = createEle('div', mainEl, [], ['pg-block'], []);
                     pageBlocker.inable();
                     let clone = imgBoxEle.parentNode.cloneNode(true);
-                    let blockExit = createEle('button', clone, [], ['exit-btn'], [['innerHTML', '<img src="images/icon-close.svg" alt="close the page blocker" width="20">']]);
+                    let blockExit = createEle('button', clone, [['aria-label', 'close the large image display']], ['exit-btn'], []);
+                    createEle('img', blockExit, [['src', "images/icon-close.svg"], ['alt', "close the page blocker"]], [], []);
                     blockExit.addEventListener('click', () => {pageBlocker.disable(); clone.remove()});
                     document.querySelector('.wrapper').append(clone);
                     clone.append(blockExit);
@@ -74,52 +73,31 @@ function addEvent(ele, events, active, e) {
                 }
                 for (let i = 0; i < productImgs.length; i++) {
                         let img = cTN ? cTN[i] : thumbnails[i];
-                        img.classList.remove('chosen');
+                        img.setAttribute('aria-selected', false);
                 }
-                //thumbnails = thumbnails ? thumbnails.children : productThumbnails;
-                thumbnails[currentIndex].classList.add('chosen');
+                thumbnails[currentIndex].setAttribute('aria-selected', true)
 
                 currentImg = productImgs[currentIndex];
                 let imgBox = document.querySelector('.img-box-clone .product-image');
-                if (imgBox) imgBox.style.backgroundImage = `url(${currentImg})`;
-                else document.querySelector('.product-image').style.backgroundImage = `url(${currentImg})`;
+                if (imgBox) imgBox.setAttribute('src', currentImg);
+                else document.querySelector('.product-image').setAttribute('src', currentImg);
             })
         },
 
         changeQuantity: (btn) => {
             ele.addEventListener('click', () => {
-                if (btn == '-' && quantity) {
-                    quantity--;
+                let quantity = Number(quantityVal.innerText);
+                if (btn == '-' && quantity > 0) {
+                    quantityVal.innerText = quantity - 1;
                 } else if (btn == '+') {
-                    quantity++;
-                }
-                quantityVal.innerHTML = quantity;
-            })
-        },
-
-        add2Cart: () => {
-            ele.addEventListener('click', () => {
-                if (quantityVal.innerHTML > 0) {
-                    window.localStorage.setItem("itemName", productName);
-                    window.localStorage.setItem("itemQuantity", quantity);
-                    quantityVal.innerText = 0;
-                    document.documentElement.style.setProperty('--cart-val', `"${quantity}"`);   
-                    document.documentElement.style.setProperty('--display', 'block');   
-                    updateCart();
+                    quantityVal.innerText = quantity + 1;
                 }
             })
         },
 
-        removeFromCart: () => {
-            ele.addEventListener('click', () => {
-                window.localStorage.setItem('itemQuantity', 0);
-                quantity = 0;
-                cartItems.innerHTML = "<p>Your cart is empty.</p>";
-                cartItems.classList.add('empty');
-                document.documentElement.style.setProperty('--display', 'none');   
+        add2Cart: () => ele.addEventListener('click', () => {if(quantityVal.innerText > 0) cartVal.update()}),
 
-            })
-        }
+        removeFromCart: () => ele.addEventListener('click', () => cartVal.clear())
     }
 }
 
@@ -154,13 +132,11 @@ window.addEventListener('resize', () => {
     if (clone) clone.remove();
 })
 
-//document.documentElement.style.setProperty('--inner-height', window.innerHeight + 'px');
 
 const pageBlock = document.createElement('div');
 const pageBlocker = {
     inable: () => {
         document.body.append(pageBlock);
-        //forground.style.zIndex = '200';
         pageBlock.classList.add('pg-block');
         pageBlock.classList.add('active');
     } ,
@@ -173,47 +149,65 @@ const pageBlocker = {
 // The nav menu
 const navMenu = document.querySelector(".nav-menu");
 
-addEvent(document.querySelector(".nav-menu-btn"), ["click"], true, navMenu).activate(pageBlocker.inable)//() => navPageBlock.style.display = 'block');
-addEvent(document.querySelector(".close-menu-btn"), ["click"], true, navMenu).activate(pageBlocker.disable)//() => navPageBlock.style.display = 'none');
+addEvent(document.querySelector(".nav-menu-btn"), ["click"], true, navMenu).activate(pageBlocker.inable)
+addEvent(document.querySelector(".close-menu-btn"), ["click"], true, navMenu).activate(pageBlocker.disable)
 
 // the cart
 
-const productName = document.querySelector('h2').innerText;
-
-let quantity = window.localStorage.getItem('itemQuantity') || 0;
-if (quantity > 0) {
-    document.documentElement.style.setProperty('--cart-val', `"${quantity}"`);   
-    document.documentElement.style.setProperty('--display', 'block');
-}
+const productName = document.querySelector('h1').innerText;
 
 const cartPanel = document.querySelector(".cart-panel");
 const cartItems = document.querySelector(".cart-items");
 
-function updateCart() {
-    if (window.localStorage.getItem("itemQuantity") > 0) {
+
+addEvent(document.querySelector(".cart"), ["click"], true, cartPanel).activate(() => window.localStorage.getItem('itemQuantity') ? manageCart.fill : manageCart.empty);
+
+
+
+const manageCart = {
+    fill: () => {
         cartItems.innerHTML = "";
         cartItems.classList.remove('empty');
+        let quantity = window.localStorage.getItem("itemQuantity");
+        document.documentElement.style.setProperty('--cart-val', `"${quantity}"`);
+        cartPanel.setAttribute('aria-label', quantity + ' items');
+        document.documentElement.style.setProperty('--display', 'block');
         let cartItemsWapper = createEle('div', cartItems, [], ['cart-items-wrapper'], []);
         let name = window.localStorage.getItem('itemName');
-        quantity = window.localStorage.getItem('itemQuantity');
         createEle('img', cartItemsWapper, [['alt', name], ['src', 'images/image-product-1-thumbnail.jpg']], ['incart-img'], []);
         createEle('p', cartItemsWapper, [], ['incart-product-name'], [['innerText', name]]);
         let price = document.querySelector('.current-price').innerText;
         let priceVal = price.slice(1);
-        createEle('p', cartItemsWapper, [], ['incart-total'], [['innerHTML', `${price} × ${quantity} <span class='bold'>$${(priceVal * quantity).toFixed(2)}</span>`]]);
-        let removeBtn = createEle('button', cartItemsWapper, [], ['incart-remove-btn'], [['innerHTML', "<img src='images/icon-delete.svg' width='20'>"]]);
+        let total = createEle('p', cartItemsWapper, [], ['incart-total'], [['textContent', `${price} × ${quantity} `]]);
+        createEle('span', total, [], ['bold'], [['innerText', `$${(priceVal * quantity).toFixed(2)}`]]);
+        let removeBtn = createEle('button', cartItemsWapper, [], ['incart-remove-btn'], []);
+        createEle('img', removeBtn, [['src', 'images/icon-delete.svg'], ['width', '20'], ['alt', 'remove item']], [], []);
         addEvent(removeBtn).removeFromCart();
         createEle('button', cartItems, [], ['checkoutBtn'], [['innerText', 'Checkout']]);
-
-   } else {
+    },
+    empty: () => {
         cartItems.innerHTML = "<p>Your cart is empty.</p>";
         cartItems.classList.add('empty');
-   }
+        document.documentElement.style.setProperty('--display', 'none');
+        cartPanel.setAttribute('aria-label', 0 + ' items');
+    }
 }
-addEvent(document.querySelector(".cart"), ["click"], true, cartPanel).activate(() => updateCart());
+
+function restoreCartItems() {
+    let items = window.localStorage.getItem('itemQuantity');
+    if (items == undefined) {
+        window.localStorage.setItem("itemName", productName);
+        window.localStorage.setItem('itemQuantity', 0);
+        cartVal.update();
+    } else if (items > 0) {
+        manageCart.fill();
+    }
+}
+
+restoreCartItems();
 
 // the display img
-const imgBoxEle = document.querySelector('.product-image');
+const imgBoxEle = document.querySelector('.current-product-display');
 addEvent(imgBoxEle).megnify();
 
 
@@ -237,6 +231,17 @@ addEvent(nextImgBtn).changeImg('next');
 const decreaseBtn = document.querySelector('.decrease');
 const quantityVal = document.querySelector('.quantity-value');
 const increaseBtn = document.querySelector('.increase');
+
+const cartVal = {
+    update: () => {
+        window.localStorage.setItem("itemQuantity", quantityVal.innerText);
+        manageCart.fill();
+    },
+    clear: () => {
+        window.localStorage.setItem('itemQuantity', 0);
+        manageCart.empty();
+    }        
+};
 
 addEvent(decreaseBtn).changeQuantity('-');
 addEvent(increaseBtn).changeQuantity('+');
